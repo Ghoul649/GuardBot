@@ -48,7 +48,7 @@ int SI7021_Read(byte reg){						//Повертає данні з вказано�
 }
 
 void IRScan(){									//Функція сканування області інфрачервоним датчиком. 
-	while(Serial.available() < 6)					// Очікування вхідних данних.
+	while(Serial.available() < 8)					// Очікування вхідних данних.
 	{
 		delay(10);
 	}
@@ -129,7 +129,31 @@ void IRScan(){									//Функція сканування області ін
   Wire.endTransmission();
 }
 
-
+void MControl(){
+	while(true){
+		while(Serial.available() < 1);
+		byte control = Serial.read();
+		if (control == 0){
+			break;
+		}else if (control == 11){
+			//if (Serial.available() < 1){
+				//delay(1);
+			//}
+			while(Serial.available() < 1);
+			if (Serial.available() > 0){
+				ServoTX.write(Serial.read());
+			}
+		}else if(control == 12){
+			//if (Serial.available() < 1){
+				//delay(1);
+			//}
+			while(Serial.available() < 1);
+			if (Serial.available() > 0){
+				ServoTY.write(Serial.read());
+			}
+		}
+	}
+}
 
 
 
@@ -141,16 +165,18 @@ void setup(){
 }
 
 void loop(){
-	while(Serial.available() < 0){
+	Serial.write((byte)100);
+	while(Serial.available() < 1){
 		delay(500);
 	}
 	byte mode = Serial.read();
 	
 	if (mode == 1){
-		Serial.write(101);
+		Serial.write((byte)101);
 		IRScan();
 	}
 	if (mode == 2){
-		Serial.write((byte)MLX90614_Read(MLX90614_TOBJ1));
+		Serial.write((byte)102);
+		MControl();
 	}
 }
