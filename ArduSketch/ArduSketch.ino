@@ -9,11 +9,19 @@
 #define SI7021_TAMB 0xF3
 #define SI7021_H 0xF5
 
-#define SERVOTX 8
-#define SERVOTY 7
+//Піни
+#define SERVOTX 8	//Горизонтальна серва
+#define SERVOTY 7	//Вертикальна серва
+#define ENA 6 		//шим мотору1
+#define ENB 5		//шим мотору2
+#define EA1 12		//мотор1
+#define EA2 11		//мотор1
+#define EB1 10		//мотор2
+#define EB2 9		//мотор2
+
 Servo ServoTX;
 Servo ServoTY;
-
+int temp = 0;
 float MLX90614_Read(byte reg){ 					//Повертає температурні по цельсію з датчика MLX90614. Вхідні данні - адреса регістру (MLX90614_TAMB - температура оточення; MLX90614_TOBJ1 - Температура об'єкта).
 	Wire.beginTransmission(MLX90614_ADDR);
 	Wire.write(reg);
@@ -131,33 +139,75 @@ void IRScan(){									//Функція сканування області ін
 
 void MControl(){
 	while(true){
-		while(Serial.available() < 1);
-		byte control = Serial.read();
-		if (control == 0){
+		temp = safeReadByte(1000);
+		if(temp == -1){
+		}else if (temp == 0){
 			break;
-		}else if (control == 11){
-			//if (Serial.available() < 1){
-				//delay(1);
-			//}
-			while(Serial.available() < 1);
-			if (Serial.available() > 0){
-				ServoTX.write(Serial.read());
+		}else if (temp == 11){
+			temp = safeReadByte(100);
+			if (temp != -1){
+				ServoTX.write(temp);
 			}
-		}else if(control == 12){
-			//if (Serial.available() < 1){
-				//delay(1);
-			//}
-			while(Serial.available() < 1);
-			if (Serial.available() > 0){
-				ServoTY.write(Serial.read());
+		}else if(temp == 12){
+			temp = safeReadByte(100);
+			if (temp != -1){
+				ServoTY.write(temp);
+			}
+		}else if(temp == 13){
+			temp = safeReadByte(100);
+			if (temp != -1){
+				analogWrite(ENA, temp);
+			}
+		}else if(temp == 14){
+			temp = safeReadByte(100);
+			if (temp != -1){
+				analogWrite(ENB, temp);
+			}
+		}else if(temp == 15){
+			temp = safeReadByte(100);
+			if (temp == 1){
+				digitalWrite(EA1,HIGH);
+				digitalWrite(EA2,LOW);
+			}else if(temp == 2){
+				digitalWrite(EA1,LOW);
+				digitalWrite(EA2,HIGH);
+			}else{
+				digitalWrite(EA1,LOW);
+				digitalWrite(EA2,LOW);
+			}
+		}else if(temp == 16){
+			temp = safeReadByte(100);
+			if (temp == 1){
+				digitalWrite(EB1,HIGH);
+				digitalWrite(EB2,LOW);
+			}else if(temp == 2){
+				digitalWrite(EB1,LOW);
+				digitalWrite(EB2,HIGH);
+			}else{
+				digitalWrite(EB1,LOW);
+				digitalWrite(EB2,LOW);
 			}
 		}
 	}
 }
 
-
+long temptime = 0;
+int safeReadByte(int timeout){
+	temptime = millis();
+	while(Serial.available() < 1 && millis() - temptime < timeout);
+	if (Serial.available() > 0){
+		return Serial.read();
+	}
+	return -1;
+}
 
 void setup(){
+	pinMode(ENA,OUTPUT);
+	pinMode(ENB,OUTPUT);
+	pinMode(EA1,OUTPUT);
+	pinMode(EA2,OUTPUT);
+	pinMode(EB1,OUTPUT);
+	pinMode(EB2,OUTPUT);
 	Serial.begin(9600);
 	Wire.begin();
 	ServoTX.attach(SERVOTX);
