@@ -1,0 +1,12 @@
+C:\Users\Ghoul\source\repos\CSRobot\CSRobot\bin\Debug\CSRobot.exe.config
+C:\Users\Ghoul\source\repos\CSRobot\CSRobot\bin\Debug\CSRobot.exe
+C:\Users\Ghoul\source\repos\CSRobot\CSRobot\bin\Debug\CSRobot.pdb
+C:\Users\Ghoul\source\repos\CSRobot\CSRobot\obj\Debug\CSRobot.csprojAssemblyReference.cache
+C:\Users\Ghoul\source\repos\CSRobot\CSRobot\obj\Debug\CSRobot.Properties.Resources.resources
+C:\Users\Ghoul\source\repos\CSRobot\CSRobot\obj\Debug\CSRobot.csproj.GenerateResource.cache
+C:\Users\Ghoul\source\repos\CSRobot\CSRobot\obj\Debug\CSRobot.exe
+C:\Users\Ghoul\source\repos\CSRobot\CSRobot\obj\Debug\CSRobot.pdb
+C:\Users\Ghoul\source\repos\CSRobot\CSRobot\obj\Debug\CSRobot.Form1.resources
+C:\Users\Ghoul\source\repos\CSRobot\CSRobot\obj\Debug\CSRobot.ManualController.resources
+C:\Users\Ghoul\source\repos\CSRobot\CSRobot\obj\Debug\CSRobot.IRScanner.resources
+C:\Users\Ghoul\source\repos\CSRobot\CSRobot\obj\Debug\CSRobot.SerialConsole.resources
