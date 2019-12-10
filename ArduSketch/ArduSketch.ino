@@ -18,12 +18,8 @@
 #define LHAND 47	//Ліва клешня
 #define SERVOTX 8	//Горизонтальна серва
 #define SERVOTY 7	//Вертикальна серва
-#define ENA 6 		//шим мотору1
-#define ENB 5		//шим мотору2
-#define EA1 12		//мотор1
-#define EA2 11		//мотор1
-#define EB1 10		//мотор2
-#define EB2 9		//мотор2
+#define RLINE 22
+#define LLINE 23
 
 Servo RArm;
 Servo RElbow;
@@ -279,13 +275,34 @@ int safeReadByte(int timeout){
 	return -1;
 }
 
+void LineFollowing(){
+	Serial1.write(3);
+	Serial1.write(1);
+	Serial1.write(4);
+	Serial1.write(1);
+	Serial1.write(1);
+	Serial1.write(20);
+	Serial1.write(2);
+	Serial1.write(20);
+	while(true){
+		if (Serial2.available() > 0){
+			if (Serial2.read() == 0){
+				Serial1.write(1);
+				Serial1.write(0);
+				Serial1.write(2);
+				Serial1.write(0);
+				break;
+			}
+		}
+		if(!analogRead(RLINE)){
+			
+		}
+	}
+}
+
 void setup(){
-	pinMode(ENA,OUTPUT);
-	pinMode(ENB,OUTPUT);
-	pinMode(EA1,OUTPUT);
-	pinMode(EA2,OUTPUT);
-	pinMode(EB1,OUTPUT);
-	pinMode(EB2,OUTPUT);
+	pinMode(RLINE,INPUT);
+	pinMode(LLINE,INPUT);
 	Serial2.begin(9600);
 	Serial1.begin(9600);
 	Wire.begin();
@@ -310,9 +327,10 @@ void loop(){
 	if (mode == 1){
 		Serial2.write((byte)101);
 		IRScan();
-	}
-	if (mode == 2){
+	}else if (mode == 2){
 		Serial2.write((byte)102);
 		MControl();
+	}else if (mode == 3){
+		
 	}
 }
