@@ -10,6 +10,12 @@
 #define SI7021_H 0xF5
 
 //Піни
+#define RARM 50 	//Праве плече
+#define RELBOW 48   //Правий лікоть
+#define RHAND 46	//Права клешня
+#define LARM 51		//Ліве плече
+#define LELBOW 49	//Лівий лікоть
+#define LHAND 47	//Ліва клешня
 #define SERVOTX 8	//Горизонтальна серва
 #define SERVOTY 7	//Вертикальна серва
 #define ENA 6 		//шим мотору1
@@ -19,18 +25,33 @@
 #define EB1 10		//мотор2
 #define EB2 9		//мотор2
 
+Servo RArm;
+Servo RElbow;
+Servo RHand;
+Servo LArm;
+Servo LElbow;
+Servo LHand;
 Servo ServoTX;
 Servo ServoTY;
 int temp = 0;
+float tempf = 0;
 float MLX90614_Read(byte reg){ 					//Повертає температурні по цельсію з датчика MLX90614. Вхідні данні - адреса регістру (MLX90614_TAMB - температура оточення; MLX90614_TOBJ1 - Температура об'єкта).
 	Wire.beginTransmission(MLX90614_ADDR);
 	Wire.write(reg);
 	Wire.endTransmission(false);
 	Wire.requestFrom(MLX90614_ADDR,3,false);
-	while (Wire.available() < 3);
-	float result = Wire.read() + Wire.read()*256;
+	temp = safeReadWire(100);
+	if (temp == -1){
+		return 0;
+	}
+	float result = temp;
+	temp = safeReadWire(100);
+	if (temp == -1){
+		return 0;
+	}
+	result += temp*256;
 	result = (result*0.02 - 0.01) - 273.15;
-	byte pec = Wire.read();
+	byte pec = safeReadWire(100);
 	Wire.endTransmission();
 	return result;
 }
@@ -56,18 +77,18 @@ int SI7021_Read(byte reg){						//Повертає данні з вказано�
 }
 
 void IRScan(){									//Функція сканування області інфрачервоним датчиком. 
-	while(Serial.available() < 8)					// Очікування вхідних данних.
+	while(Serial2.available() < 8)					// Очікування вхідних данних.
 	{
 		delay(10);
 	}
-	byte xfrom = Serial.read();					//Початковий кут по Х.
-	byte xto = Serial.read();						//Кінцевий кут по Х.
-	byte yfrom = Serial.read();					//Початковий кут по .
-	byte yto = Serial.read();						//Кінцевий кут по .
-	byte k = Serial.read();						//Крок.
-	byte del = Serial.read();						//Затримка перед зчитуванням.
-	byte adddel = Serial.read();					//Додаткова затримка при зміні напрямку руху.
-	byte subdel = Serial.read();					//Прискорення при змыны напрямку руху.
+	byte xfrom = Serial2.read();					//Початковий кут по Х.
+	byte xto = Serial2.read();						//Кінцевий кут по Х.
+	byte yfrom = Serial2.read();					//Початковий кут по .
+	byte yto = Serial2.read();						//Кінцевий кут по .
+	byte k = Serial2.read();						//Крок.
+	byte del = Serial2.read();						//Затримка перед зчитуванням.
+	byte adddel = Serial2.read();					//Додаткова затримка при зміні напрямку руху.
+	byte subdel = Serial2.read();					//Прискорення при змыны напрямку руху.
   
 	int temp = 0;
 	int tempdel = 0;
@@ -91,13 +112,13 @@ void IRScan(){									//Функція сканування області ін
 		Wire.requestFrom(MLX90614_ADDR,3,false);
 		while (Wire.available() < 3);
 		temp = Wire.read();
-		Serial.write(Wire.read());
-		Serial.write(temp);
+		Serial2.write(Wire.read());
+		Serial2.write(temp);
 		Wire.read();
 		Wire.endTransmission();
     }
-	if (Serial.available() > 0){
-		if (Serial.read() == 200){
+	if (Serial2.available() > 0){
+		if (Serial2.read() == 200){
 			Wire.endTransmission();
 			ServoTX.write(90);
 			ServoTY.write(90);
@@ -121,13 +142,13 @@ void IRScan(){									//Функція сканування області ін
 		Wire.requestFrom(MLX90614_ADDR,3,false);
 		while (Wire.available() < 3);
 		temp = Wire.read();
-		Serial.write(Wire.read());
-		Serial.write(temp);
+		Serial2.write(Wire.read());
+		Serial2.write(temp);
 		Wire.read();
 		Wire.endTransmission();
     }
-	if (Serial.available() > 0){
-		if (Serial.read() == 200){
+	if (Serial2.available() > 0){
+		if (Serial2.read() == 200){
 			ServoTX.write(90);
 			ServoTY.write(90);
 			return;
@@ -156,47 +177,104 @@ void MControl(){
 		}else if(temp == 13){
 			temp = safeReadByte(100);
 			if (temp != -1){
-				analogWrite(ENA, temp);
+				Serial1.write(1);
+				Serial1.write(temp);
 			}
 		}else if(temp == 14){
 			temp = safeReadByte(100);
 			if (temp != -1){
-				analogWrite(ENB, temp);
+				Serial1.write(2);
+				Serial1.write(temp);
 			}
 		}else if(temp == 15){
 			temp = safeReadByte(100);
 			if (temp == 1){
-				digitalWrite(EA1,HIGH);
-				digitalWrite(EA2,LOW);
+				Serial1.write(3);
+				Serial1.write(1);
 			}else if(temp == 2){
-				digitalWrite(EA1,LOW);
-				digitalWrite(EA2,HIGH);
+				Serial1.write(3);
+				Serial1.write(2);
 			}else{
-				digitalWrite(EA1,LOW);
-				digitalWrite(EA2,LOW);
+				Serial1.write(3);
+				Serial1.write(1);
 			}
 		}else if(temp == 16){
 			temp = safeReadByte(100);
 			if (temp == 1){
-				digitalWrite(EB1,HIGH);
-				digitalWrite(EB2,LOW);
+				Serial1.write(4);
+				Serial1.write(1);
 			}else if(temp == 2){
-				digitalWrite(EB1,LOW);
-				digitalWrite(EB2,HIGH);
+				Serial1.write(4);
+				Serial1.write(2);
 			}else{
-				digitalWrite(EB1,LOW);
-				digitalWrite(EB2,LOW);
+				Serial1.write(4);
+				Serial1.write(1);
 			}
+		}else if(temp == 17){
+			temp = safeReadByte(100);
+			if (temp != -1){
+				RArm.write(temp);
+			}
+		}else if(temp == 18){
+			temp = safeReadByte(100);
+			if (temp != -1){
+				RElbow.write(temp);
+			}
+		}else if(temp == 19){
+			temp = safeReadByte(100);
+			if (temp != -1){
+				RHand.write(temp);
+			}
+		}else if(temp == 20){
+			temp = safeReadByte(100);
+			if (temp != -1){
+				LArm.write(temp);
+			}
+		}else if(temp == 21){
+			temp = safeReadByte(100);
+			if (temp != -1){
+				LElbow.write(temp);
+			}
+		}else if(temp == 22){
+			temp = safeReadByte(100);
+			if (temp != -1){
+				LHand.write(temp);
+			}
+		}else if(temp == 101){
+			tempf = SI7021_ReadT();
+			Serial2.write((byte)(80 + tempf));
+			Serial2.write((byte)((int)(tempf*100)%100));
+		}else if(temp == 102){
+			tempf = SI7021_ReadH();
+			Serial2.write((byte)(80 + tempf));
+			Serial2.write((byte)((int)(tempf*100)%100));
+		}else if(temp == 103){
+			tempf = MLX90614_Read(MLX90614_TAMB);
+			Serial2.write((byte)(80 + tempf));
+			Serial2.write((byte)((int)(tempf*100)%100));
+		}else if(temp == 104){
+			tempf = MLX90614_Read(MLX90614_TOBJ1);
+			Serial2.write((byte)(80 + tempf));
+			Serial2.write((byte)((int)(tempf*100)%100));
 		}
+		
 	}
 }
 
 long temptime = 0;
+int safeReadWire(int timeout){
+	temptime = millis();
+	while(Wire.available() < 1 && millis() - temptime < timeout);
+	if (Wire.available() > 0){
+		return Wire.read();
+	}
+	return 0;
+}
 int safeReadByte(int timeout){
 	temptime = millis();
-	while(Serial.available() < 1 && millis() - temptime < timeout);
-	if (Serial.available() > 0){
-		return Serial.read();
+	while(Serial2.available() < 1 && millis() - temptime < timeout);
+	if (Serial2.available() > 0){
+		return Serial2.read();
 	}
 	return -1;
 }
@@ -208,25 +286,33 @@ void setup(){
 	pinMode(EA2,OUTPUT);
 	pinMode(EB1,OUTPUT);
 	pinMode(EB2,OUTPUT);
-	Serial.begin(9600);
+	Serial2.begin(9600);
+	Serial1.begin(9600);
 	Wire.begin();
 	ServoTX.attach(SERVOTX);
 	ServoTY.attach(SERVOTY);
+	RArm.attach(RARM);
+	LArm.attach(LARM);
+	RElbow.attach(RELBOW);
+	LElbow.attach(LELBOW);
+	RHand.attach(RHAND);
+	LHand.attach(LHAND);
+	
 }
 
 void loop(){
-	Serial.write((byte)100);
-	while(Serial.available() < 1){
+	Serial2.write((byte)100);
+	while(Serial2.available() < 1){
 		delay(500);
 	}
-	byte mode = Serial.read();
+	byte mode = Serial2.read();
 	
 	if (mode == 1){
-		Serial.write((byte)101);
+		Serial2.write((byte)101);
 		IRScan();
 	}
 	if (mode == 2){
-		Serial.write((byte)102);
+		Serial2.write((byte)102);
 		MControl();
 	}
 }
