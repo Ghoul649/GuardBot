@@ -221,8 +221,8 @@ namespace CSRobot
                 }
                 float val = 0;
                 val = (RobotPort.ReadByte() * 256 + RobotPort.ReadByte()) * 0.02f - 273.16f;
-                matrix[JM - J - 1, IM - I - 1] = val;
-                image.SetPixel(JM - J - 1, IM - I - 1, colorFunc(val));
+                matrix[JM - J - 1, I] = val;
+                image.SetPixel(JM - J - 1, I, colorFunc(val));
 
 
                 updated = true;

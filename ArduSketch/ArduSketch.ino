@@ -265,6 +265,47 @@ void MControl(){
      temp = analogRead(LIGHT);
       Serial2.write((byte)(temp/256));
       Serial2.write((byte)(temp%256));
+    }else if (temp == 105){
+      digitalWrite(DUSTD,LOW);
+      delayMicroseconds(280);
+      temp = analogRead(DUSTA);
+      delayMicroseconds(40);
+      digitalWrite(DUSTD,HIGH); 
+      delayMicroseconds(9680);
+      Serial2.write((byte)(temp/256));
+      Serial2.write((byte)(temp%256));
+    }else if (temp == 106){
+      temp = digitalRead(FIRE);
+      Serial2.write((byte)(temp));
+    }else if (temp == 107){
+      temp = SI7021_Read(SI7021_TAMB);
+      Serial2.write((byte)(temp/256));
+      Serial2.write((byte)(temp%256));
+      delay(10);
+      temp = SI7021_Read(SI7021_H);
+      Serial2.write((byte)(temp/256));
+      Serial2.write((byte)(temp%256));
+      delay(10);
+      temp = analogRead(ALCHO);
+      Serial2.write((byte)(temp/256));
+      Serial2.write((byte)(temp%256));
+      delay(10);
+      temp = analogRead(LIGHT);
+      Serial2.write((byte)(temp/256));
+      Serial2.write((byte)(temp%256));
+      delay(10);
+      digitalWrite(DUSTD,LOW);
+      delayMicroseconds(280);
+      temp = analogRead(DUSTA);
+      delayMicroseconds(40);
+      digitalWrite(DUSTD,HIGH); 
+      delayMicroseconds(9680);
+      Serial2.write((byte)(temp/256));
+      Serial2.write((byte)(temp%256));
+      delay(10);
+      temp = digitalRead(FIRE);
+      Serial2.write(0);
+      Serial2.write((byte)temp);
     }
 	}
 }
@@ -324,7 +365,6 @@ void loop(){
 		delay(500);
 	}
 	byte mode = Serial2.read();
-	
 	if (mode == 1){
 		Serial2.write((byte)101);
 		IRScan();

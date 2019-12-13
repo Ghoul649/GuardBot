@@ -63,6 +63,8 @@ namespace CSRobot
                 UI = !UI;
                 if (UI)
                 {
+                    button1.Enabled = false;
+                    checkBox3.Enabled = false;
                     groupBox1.Enabled = true;
                     groupBox2.Enabled = true;
                     groupBox3.Enabled = true;
@@ -71,6 +73,8 @@ namespace CSRobot
                 }
                 else 
                 {
+                    button1.Enabled = false;
+                    checkBox3.Enabled = false;
                     groupBox1.Enabled = false;
                     groupBox2.Enabled = false;
                     groupBox3.Enabled = false;
@@ -126,7 +130,7 @@ namespace CSRobot
             {
                 label2.Text = "Y " + TY;
                 buffer[0] = 12;
-                if (!checkBox1.Checked)
+                if (checkBox2.Checked)
                     buffer[1] = (byte)(TYMax - TY);
                 else
                     buffer[1] = TY;
@@ -319,7 +323,7 @@ namespace CSRobot
                 RobotPort.Write(buffer, 0, 4);
             }
         }
-        byte[] buffer = new byte[4];
+        byte[] buffer = new byte[12];
 
         bool KEl = false;
         bool KQl = false;
@@ -426,7 +430,7 @@ namespace CSRobot
             if (RH3l)
             {
                 RH3l = false;
-                buffer[0] = 19;
+                buffer[0] = 22;
                 buffer[1] = RH3;
                 RobotPort.Write(buffer, 0, 2);
             }
@@ -447,13 +451,23 @@ namespace CSRobot
             if (LH3l)
             {
                 LH3l = false;
-                buffer[0] = 22;
+                buffer[0] = 19;
                 buffer[1] = LH3;
                 RobotPort.Write(buffer, 0, 2);
             }
         }
+        
         private void timer1_Tick(object sender, EventArgs e)
         {
+            if (checkBox3.Checked) 
+            {
+                buffer[0] = 106;
+                RobotPort.Write(buffer, 0, 1);
+                RobotPort.Read(buffer, 0, 1);
+                if (buffer[0] == 1) {
+                    this.BackColor = Color.Red;
+                }
+            }
             winStart = Location;
             winCenter = new Point(Location.X + Width / 2, Location.Y + Height / 2);
             globalUpdate();
@@ -603,6 +617,7 @@ namespace CSRobot
         }
         void L1(byte val)
         {
+            val = (byte)(180 - val);
             if (val > trackBarL1.Maximum)
                 val = (byte)trackBarL1.Maximum;
             else if (val < trackBarL1.Minimum)
@@ -668,6 +683,33 @@ namespace CSRobot
         private void trackBarL3_Scroll(object sender, EventArgs e)
         {
             L3((byte)trackBarL3.Value);
+        }
+
+        private void checkBox3_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!checkBox3.Checked) 
+            {
+                this.BackColor = Color.DimGray;
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            string msg = "";
+            buffer[0] = 107;
+
+            RobotPort.Write(buffer,0,1);
+
+            RobotPort.Read(buffer, 0, 12);
+
+            msg += "temp: "+((buffer[0] * 256 + buffer[1])*175.72f/65536 - 46.85f);
+            msg += "\nhumidity: " + ((buffer[2] * 256 + buffer[3]) * 125f / 65536 - 6);
+            msg += "\nalcho: " + ((buffer[4] * 256 + buffer[5]) / 360f);
+            msg += "\nlumin: " + ((1024 - buffer[6] * 256 + buffer[7]) / 1024f);
+            msg += "\ndust: " + ((buffer[8] * 256 + buffer[9])/800f);
+            msg += "\nFire: " + (buffer[10] * 256 + buffer[11]);
+
+            label9.Text = msg;
         }
     }
 }

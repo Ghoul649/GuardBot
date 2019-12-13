@@ -58,6 +58,9 @@
             this.trackBarL3 = new System.Windows.Forms.TrackBar();
             this.trackBarL2 = new System.Windows.Forms.TrackBar();
             this.trackBarL1 = new System.Windows.Forms.TrackBar();
+            this.checkBox3 = new System.Windows.Forms.CheckBox();
+            this.button1 = new System.Windows.Forms.Button();
+            this.label9 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar6)).BeginInit();
@@ -300,6 +303,7 @@
             // 
             this.trackBarR3.Location = new System.Drawing.Point(7, 107);
             this.trackBarR3.Maximum = 180;
+            this.trackBarR3.Minimum = 40;
             this.trackBarR3.Name = "trackBarR3";
             this.trackBarR3.Size = new System.Drawing.Size(187, 45);
             this.trackBarR3.TabIndex = 2;
@@ -321,7 +325,7 @@
             // trackBarR1
             // 
             this.trackBarR1.Location = new System.Drawing.Point(7, 20);
-            this.trackBarR1.Maximum = 180;
+            this.trackBarR1.Maximum = 110;
             this.trackBarR1.Name = "trackBarR1";
             this.trackBarR1.Size = new System.Drawing.Size(187, 45);
             this.trackBarR1.TabIndex = 0;
@@ -345,6 +349,7 @@
             // 
             this.trackBarL3.Location = new System.Drawing.Point(7, 107);
             this.trackBarL3.Maximum = 180;
+            this.trackBarL3.Minimum = 40;
             this.trackBarL3.Name = "trackBarL3";
             this.trackBarL3.Size = new System.Drawing.Size(187, 45);
             this.trackBarL3.TabIndex = 2;
@@ -367,6 +372,7 @@
             // 
             this.trackBarL1.Location = new System.Drawing.Point(7, 20);
             this.trackBarL1.Maximum = 180;
+            this.trackBarL1.Minimum = 70;
             this.trackBarL1.Name = "trackBarL1";
             this.trackBarL1.Size = new System.Drawing.Size(187, 45);
             this.trackBarL1.TabIndex = 0;
@@ -374,12 +380,45 @@
             this.trackBarL1.Value = 90;
             this.trackBarL1.Scroll += new System.EventHandler(this.trackBarL1_Scroll);
             // 
+            // checkBox3
+            // 
+            this.checkBox3.AutoSize = true;
+            this.checkBox3.Location = new System.Drawing.Point(175, 13);
+            this.checkBox3.Name = "checkBox3";
+            this.checkBox3.Size = new System.Drawing.Size(80, 17);
+            this.checkBox3.TabIndex = 15;
+            this.checkBox3.Text = "Detects fire";
+            this.checkBox3.UseVisualStyleBackColor = true;
+            this.checkBox3.CheckedChanged += new System.EventHandler(this.checkBox3_CheckedChanged);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(176, 37);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 16;
+            this.button1.Text = "Get sensors info";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(175, 67);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(13, 78);
+            this.label9.TabIndex = 17;
+            this.label9.Text = "1\r\n2\r\n3\r\n4\r\n5\r\n6";
+            // 
             // ManualController
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.DimGray;
             this.ClientSize = new System.Drawing.Size(730, 543);
+            this.Controls.Add(this.label9);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.checkBox3);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.label8);
@@ -450,5 +489,8 @@
         private System.Windows.Forms.TrackBar trackBarL3;
         private System.Windows.Forms.TrackBar trackBarL2;
         private System.Windows.Forms.TrackBar trackBarL1;
+        private System.Windows.Forms.CheckBox checkBox3;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Label label9;
     }
 }
