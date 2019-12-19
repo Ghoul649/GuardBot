@@ -1,0 +1,3 @@
+[submodule "MobileApp"]
+	path = MobileApp
+	url = https://github.com/R1chrdson/RobotRemote.git
